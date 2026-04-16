@@ -1,0 +1,26 @@
+{
+  "name": "receptionist_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yeisonint/receptionist_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Yeisonint/receptionist_app/issues"
+  },
+  "homepage": "https://github.com/Yeisonint/receptionist_app#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
