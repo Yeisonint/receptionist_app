@@ -1,18 +1,45 @@
-<div style="text-align:center; margin-top: 50px; font-family: sans-serif;">
-  <h1>{{ title() }}</h1>
+<main class="app-container">
+  <!-- Glowing background blobs -->
+  <div class="blob top-left"></div>
+  <div class="blob bottom-right"></div>
+  
+  <div class="glass-container">
+    <header>
+      <h1>AI Receptionist</h1>
+      <p class="subtitle">Ordena hablando de forma natural</p>
+    </header>
 
-  <p>Prueba de conexión con el backend de Node.js v24</p>
+    <div class="status-indicator">
+      <div 
+        class="orb" 
+        [ngClass]="liveService.status()"
+      ></div>
+      <p class="status-text">{{ liveService.status() | titlecase }}</p>
+    </div>
 
-  <button (click)="getHora()"
-    style="padding: 12px 24px; font-size: 1rem; cursor: pointer; background-color: #4CAF50; color: white; border: none; border-radius: 4px;">
-    ¿Qué hora tiene el servidor?
-  </button>
+    <div class="actions">
+      <button 
+        class="primary-btn glass-btn" 
+        (click)="toggleChat()"
+        [class.active]="liveService.status() !== 'disconnected'"
+      >
+        <span class="icon">
+          @if(liveService.status() === 'disconnected') {
+            🎤
+          } @else {
+            ⏹️
+          }
+        </span>
+        {{ liveService.status() === 'disconnected' ? 'Nueva orden' : 'Finalizar orden' }}
+      </button>
+    </div>
 
-  @if (serverTime()) {
-  <div style="margin-top: 30px; font-size: 1.5rem;">
-    La hora es: <strong style="color: #2ecc71;">{{ serverTime() }}</strong>
+    @if(liveService.error()) {
+      <div class="error-msg">
+        {{ liveService.error() }}
+      </div>
+    }
   </div>
-  }
+</main>
 
-  <router-outlet></router-outlet>
-</div>
+<router-outlet></router-outlet>

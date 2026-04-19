@@ -1,0 +1,195 @@
+:root {
+  --bg-color: #0f172a;
+  --glass-bg: rgba(30, 41, 59, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --primary-accent: #3b82f6;
+  --listening-accent: #10b981;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow: hidden;
+}
+
+.app-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  padding: 1rem;
+}
+
+/* Background Animated Blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: -1;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.blob.top-left {
+  width: 400px;
+  height: 400px;
+  background: rgba(59, 130, 246, 0.4);
+  top: -100px;
+  left: -100px;
+}
+
+.blob.bottom-right {
+  width: 500px;
+  height: 500px;
+  background: rgba(139, 92, 246, 0.3);
+  bottom: -150px;
+  right: -100px;
+  animation-delay: -5s;
+}
+
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 30px) scale(1.1); }
+}
+
+/* Glassmorphism Panel */
+.glass-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+/* Status Orb */
+.status-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.orb {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #475569, #1e293b);
+  box-shadow: inset 0 -4px 10px rgba(0,0,0,0.5), 0 0 20px rgba(0,0,0,0.2);
+  transition: all 0.5s ease;
+}
+
+.orb.connecting {
+  background: radial-gradient(circle at 30% 30%, #facc15, #ca8a04);
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.5);
+  animation: pulse 1s infinite alternate;
+}
+
+.orb.listening {
+  background: radial-gradient(circle at 30% 30%, #34d399, #059669);
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.6);
+  animation: breathe 3s infinite ease-in-out;
+}
+
+.orb.speaking {
+  background: radial-gradient(circle at 30% 30%, #60a5fa, #2563eb);
+  box-shadow: 0 0 50px rgba(59, 130, 246, 0.8);
+  animation: soundwave 0.5s infinite alternate;
+}
+
+.status-text {
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.listening + .status-text { color: #34d399; }
+.speaking + .status-text { color: #60a5fa; }
+.connecting + .status-text { color: #facc15; }
+
+/* Buttons */
+.glass-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.glass-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+}
+
+.glass-btn.active {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.glass-btn.active:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  100% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+  50% { transform: scale(1.1); box-shadow: 0 0 50px rgba(16, 185, 129, 0.8); }
+}
+
+@keyframes soundwave {
+  0% { transform: scale(1); filter: blur(0px); }
+  100% { transform: scale(1.15); filter: blur(2px); }
+}
+
+.error-msg {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
