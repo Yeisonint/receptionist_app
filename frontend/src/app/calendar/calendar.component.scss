@@ -1,0 +1,216 @@
+.calendar {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.cal-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: #1a73e8;
+  color: white;
+
+  h2 { margin: 0; font-size: 1rem; font-weight: 700; }
+
+  .range-label {
+    font-size: 0.78rem;
+    opacity: 0.85;
+    text-transform: capitalize;
+  }
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.day-header {
+  text-align: center;
+  padding: 0.45rem 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #999;
+  text-transform: uppercase;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.day-cell {
+  min-height: 50px;
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-right: 1px solid #f5f5f5;
+  border-bottom: 1px solid #f5f5f5;
+  cursor: default;
+  transition: background 0.1s;
+
+  &.disabled {
+    background: #fafafa;
+    .day-num { color: #ddd; }
+  }
+
+  &:not(.disabled) {
+    cursor: pointer;
+    &:hover { background: #f0f5ff; }
+  }
+
+  &.today .day-num {
+    background: #1a73e8;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  &.selected:not(.disabled) { background: #e8f0fe; }
+
+  &.has-appts:not(.disabled) { background: #f0fff8; }
+}
+
+.day-num {
+  font-size: 0.82rem;
+  color: #333;
+  line-height: 24px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.dot-count {
+  margin-top: 2px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 1px 5px;
+}
+
+// ── Day panel ──────────────────────────────────────────────────────────────────
+
+.day-panel {
+  padding: 1rem 1.25rem;
+  border-top: 2px solid #e8f0fe;
+
+  h3 {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1a73e8;
+    text-transform: capitalize;
+  }
+}
+
+.empty {
+  color: #aaa;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.appt-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.appt-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.7rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 3px solid #1a73e8;
+
+  .slot-time {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1a73e8;
+    min-width: 60px;
+  }
+
+  .slot-dur {
+    font-size: 0.78rem;
+    color: #999;
+    flex: 1;
+  }
+
+  .appt-actions {
+    display: flex;
+    gap: 0.2rem;
+  }
+
+  .action-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 0.95rem;
+    padding: 0 2px;
+    &:hover { color: #1a73e8; }
+    &.delete:hover { color: #d93025; }
+  }
+}
+
+// ── Edit form ─────────────────────────────────────────────────────────────────
+
+.edit-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #666;
+    gap: 2px;
+
+    input {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.85rem;
+      font-family: inherit;
+      color: #222;
+      &:focus { outline: 2px solid #1a73e8; border-color: transparent; }
+    }
+  }
+
+  .edit-row { display: flex; gap: 0.4rem; label { flex: 1; } }
+
+  .edit-error { color: #d93025; font-size: 0.78rem; margin: 0; }
+
+  .edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+  }
+
+  .btn-save {
+    background: #1a73e8; color: white; border: none;
+    border-radius: 6px; padding: 0.3rem 0.85rem;
+    font-size: 0.82rem; cursor: pointer;
+    &:hover { background: #1558b0; }
+  }
+
+  .btn-cancel {
+    background: none; border: 1px solid #ddd;
+    border-radius: 6px; padding: 0.3rem 0.85rem;
+    font-size: 0.82rem; cursor: pointer;
+    &:hover { background: #f5f5f5; }
+  }
+}

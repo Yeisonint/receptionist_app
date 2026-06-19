@@ -1,45 +1,126 @@
-<main class="app-container">
-  <!-- Glowing background blobs -->
-  <div class="blob top-left"></div>
-  <div class="blob bottom-right"></div>
-  
-  <div class="glass-container">
-    <header>
-      <h1>AI Receptionist</h1>
-      <p class="subtitle">Ordena hablando de forma natural</p>
-    </header>
-
-    <div class="status-indicator">
-      <div 
-        class="orb" 
-        [ngClass]="liveService.status()"
-      ></div>
-      <p class="status-text">{{ liveService.status() | titlecase }}</p>
+<div class="page">
+  <header>
+    <div class="header-left">
+      <h1>{{ config()?.businessName ?? 'Receptionist' }}</h1>
+      <span class="badge" [attr.data-status]="status()">{{ status() }}</span>
     </div>
+    <button class="icon-btn" title="Configuración" (click)="openConfig()">⚙</button>
+  </header>
 
-    <div class="actions">
-      <button 
-        class="primary-btn glass-btn" 
-        (click)="toggleChat()"
-        [class.active]="liveService.status() !== 'disconnected'"
+  <div class="layout">
+    <!-- Voice panel -->
+    <div class="voice-panel">
+      <button
+        class="call-btn"
+        [attr.data-status]="status()"
+        [disabled]="isConnecting()"
+        (click)="toggle()"
       >
-        <span class="icon">
-          @if(liveService.status() === 'disconnected') {
-            🎤
-          } @else {
-            ⏹️
-          }
-        </span>
-        {{ liveService.status() === 'disconnected' ? 'Nueva orden' : 'Finalizar orden' }}
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+          <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+        </svg>
+        <span>{{ buttonLabel() }}</span>
       </button>
+
+      @if (micGranted() === false) {
+        <p class="hint error">Micrófono denegado. Permite el acceso en el navegador.</p>
+      } @else if (isDisconnected()) {
+        <p class="hint">Presiona para iniciar la conversación</p>
+      } @else if (isConnecting()) {
+        <p class="hint">Conectando...</p>
+      } @else {
+        <p class="hint active">Escuchando — habla ahora</p>
+      }
+
+      @if (errorMsg()) {
+        <p class="error-msg">{{ errorMsg() }}</p>
+      }
+
+      @if (transcript().length > 0) {
+        <div class="transcript">
+          @for (entry of transcript(); track $index) {
+            <div class="entry" [attr.data-role]="entry.role">
+              <span class="label">{{ entry.role === 'user' ? 'Tú' : 'Asistente' }}</span>
+              <p>{{ entry.text }}</p>
+            </div>
+          }
+        </div>
+      }
     </div>
 
-    @if(liveService.error()) {
-      <div class="error-msg">
-        {{ liveService.error() }}
-      </div>
-    }
+    <!-- Calendar panel -->
+    <div class="cal-panel">
+      <app-calendar />
+    </div>
   </div>
-</main>
+</div>
 
-<router-outlet></router-outlet>
+<!-- Config modal -->
+@if (showConfig() && editConfig(); as cfg) {
+  <div class="modal-backdrop" (click)="closeConfig()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h2>Configuración</h2>
+
+      <label>Nombre del negocio
+        <input type="text" [(ngModel)]="cfg.businessName" />
+      </label>
+
+      <label>Instrucción del sistema
+        <textarea rows="4" [(ngModel)]="cfg.systemInstruction"></textarea>
+      </label>
+
+      <div class="row">
+        <label>Apertura
+          <input type="number" [(ngModel)]="cfg.businessHours.start" min="0" max="23" />
+        </label>
+        <label>Cierre
+          <input type="number" [(ngModel)]="cfg.businessHours.end" min="0" max="23" />
+        </label>
+        <label>Hora almuerzo
+          <input type="number" [(ngModel)]="cfg.lunchHour" min="0" max="23" />
+        </label>
+      </div>
+
+      <label>Duración de cita (minutos)
+        <div class="slot-options">
+          @for (opt of slotOptions; track opt) {
+            <label class="radio-opt">
+              <input type="radio" name="slot" [value]="opt" [(ngModel)]="cfg.slotDurationMinutes" />
+              {{ opt }} min
+            </label>
+          }
+        </div>
+      </label>
+
+      <label>Días hábiles
+        <div class="day-checks">
+          @for (i of [0,1,2,3,4,5,6]; track i) {
+            <label class="check-opt">
+              <input type="checkbox"
+                [checked]="cfg.businessDays.includes(i)"
+                (change)="toggleDay(i)"
+              />
+              {{ dayNames[i] }}
+            </label>
+          }
+        </div>
+      </label>
+
+      <label>Voz
+        <select [(ngModel)]="cfg.voiceName">
+          <option value="Puck">Puck</option>
+          <option value="Charon">Charon</option>
+          <option value="Kore">Kore</option>
+          <option value="Fenrir">Fenrir</option>
+          <option value="Aoede">Aoede</option>
+        </select>
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeConfig()">Cancelar</button>
+        <button class="btn-primary" (click)="saveConfig()">Guardar</button>
+      </div>
+    </div>
+  </div>
+}

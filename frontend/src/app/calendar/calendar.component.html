@@ -1,0 +1,83 @@
+<div class="calendar">
+  <div class="cal-header">
+    <h2>Próximos 30 días</h2>
+    <span class="range-label">{{ rangeLabel() }}</span>
+  </div>
+
+  <div class="cal-grid">
+    @for (h of ['Lu','Ma','Mi','Ju','Vi','Sá','Do']; track h) {
+      <div class="day-header">{{ h }}</div>
+    }
+
+    @for (day of days(); track day.dateStr) {
+      <div
+        class="day-cell"
+        [class.disabled]="!day.inRange"
+        [class.today]="day.isToday"
+        [class.selected]="selectedDay()?.dateStr === day.dateStr"
+        [class.has-appts]="day.inRange && day.appointments.length > 0"
+        (click)="selectDay(day)"
+      >
+        <span class="day-num">{{ day.date.getDate() }}</span>
+        @if (day.inRange && day.appointments.length > 0) {
+          <span class="dot-count">{{ day.appointments.length }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  @if (selectedDay(); as day) {
+    <div class="day-panel">
+      <h3>{{ formatDayLabel(day.date) }}</h3>
+
+      @if (day.appointments.length === 0) {
+        <p class="empty">Sin reservas</p>
+      } @else {
+        <ul class="appt-list">
+          @for (appt of day.appointments; track appt.id) {
+            <li class="appt-item">
+              @if (editing()?.id === appt.id) {
+                <div class="edit-form">
+                  <div class="edit-row">
+                    <label>Nombre
+                      <input type="text" [(ngModel)]="editing()!.client_name" />
+                    </label>
+                    <label>Teléfono
+                      <input type="text" [(ngModel)]="editing()!.phone" />
+                    </label>
+                  </div>
+                  <div class="edit-row">
+                    <label>Fecha
+                      <input type="date" [(ngModel)]="editing()!.date" />
+                    </label>
+                    <label>Hora
+                      <input type="time" [(ngModel)]="editing()!.time" />
+                    </label>
+                    <label>Min
+                      <input type="number" [(ngModel)]="editing()!.duration_minutes" min="30" step="30" />
+                    </label>
+                  </div>
+                  <label>Notas
+                    <input type="text" [(ngModel)]="editing()!.notes" />
+                  </label>
+                  @if (saveError()) { <p class="edit-error">{{ saveError() }}</p> }
+                  <div class="edit-actions">
+                    <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+                    <button class="btn-save" (click)="saveEdit()">Guardar</button>
+                  </div>
+                </div>
+              } @else {
+                <span class="slot-time">{{ formatTime(appt.time) }}</span>
+                <span class="slot-dur">{{ appt.duration_minutes }} min</span>
+                <div class="appt-actions">
+                  <button class="action-btn" title="Editar" (click)="startEdit(appt)">✎</button>
+                  <button class="action-btn delete" title="Cancelar" (click)="cancelAppointment(appt.id)">✕</button>
+                </div>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>
